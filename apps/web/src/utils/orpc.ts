@@ -6,20 +6,20 @@ import { QueryCache, QueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 export const queryClient = new QueryClient({
-  queryCache: new QueryCache({
-    onError: (error, query) => {
-      toast.error(`Error: ${error.message}`, {
-        action: {
-          label: "retry",
-          onClick: query.invalidate,
-        },
-      });
-    },
-  }),
+	queryCache: new QueryCache({
+		onError: (error, query) => {
+			toast.error(`Error: ${error.message}`, {
+				action: {
+					label: "retry",
+					onClick: query.invalidate,
+				},
+			});
+		},
+	}),
 });
 
 export const link = new RPCLink({
-  url: `${typeof window !== "undefined" ? window.location.origin : "http://localhost:3001"}/api/rpc`,
+	url: `${typeof window === "undefined" ? "http://localhost:3001" : window.location.origin}/api/rpc`,
 });
 
 export const client: AppRouterClient = createORPCClient(link);

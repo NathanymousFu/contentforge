@@ -1,3 +1,74 @@
+# ContentForge — Agent Guide
+
+## Monorepo Layout
+
+```
+apps/web/          Next.js 16 App Router (port 3001)
+packages/api/      oRPC routers, context, auth config (shared business logic)
+packages/db/       Prisma schema + client (PostgreSQL via pg adapter)
+packages/env/      t3-env validation (separate web.ts and server.ts)
+packages/ui/       shadcn/ui primitives (import as @contentforge/ui/components/*)
+packages/config/   Shared tsconfig.base.json
+```
+
+## Essential Commands
+
+- `bun run dev` — Start all apps (port **3001**, not 3000)
+- `bun run dev:web` — Start only the Next.js app
+- `bun run db:push` — Push Prisma schema to DB (no migration files)
+- `bun run db:generate` — Regenerate Prisma client
+- `bun run db:studio` — Open Prisma Studio
+- `bun x ultracite fix` — Format + lint fix (run before commits)
+- `bun x ultracite check` — Check for issues
+- `bun run check-types` — TypeScript type-check all packages
+
+## Environment
+
+- `.env` lives at `apps/web/.env` (not repo root)
+- Required: `DATABASE_URL`, `CORS_ORIGIN`, `NEXTAUTH_URL`, `NEXTAUTH_SECRET`
+- Server env validated in `packages/env/src/server.ts`, web in `packages/env/src/web.ts`
+
+## Database
+
+- PostgreSQL via `@prisma/adapter-pg` (Supabase-style connection string)
+- Prisma client instantiated in `packages/db/src/index.ts` as `createPrismaClient()`
+- Schema in `packages/db/prisma/schema/` (split across `.prisma` files)
+- Generated client at `packages/db/prisma/generated/`
+- `prisma.config.ts` uses relative path to `apps/web/.env` for DATABASE_URL
+
+## oRPC API Pattern
+
+1. Context created by `createContext()` in `packages/api/src/context.ts` — receives `NextRequest`, returns `{ session }` from NextAuth `getServerSession`
+2. Routers defined in `packages/api/src/routers/` — add new router to `index.ts`
+3. Route handler at `apps/web/src/app/api/rpc/[[...rest]]/route.ts` — uses `RPCHandler` + `OpenAPIHandler`
+4. Client setup in `apps/web/src/utils/orpc.ts` — exports `client` (raw) and `orpc` (TanStack Query utils)
+5. Procedure types: `publicProcedure` (no auth), `protectedProcedure` (requires session)
+
+## Auth (NextAuth v4)
+
+- Config at `packages/api/src/lib/auth-options.ts` (shared between context and route handler)
+- Route handler at `apps/web/src/app/api/auth/[...nextauth]/route.ts`
+- Session types augmented in `apps/web/src/types/next-auth.d.ts`
+- Middleware at `apps/web/src/middleware.ts` protects `/dashboard/*` and `/projects/*`
+- `SessionProvider` wraps app in `providers.tsx`
+
+## shadcn/ui Conventions
+
+- Import shared components: `@contentforge/ui/components/button`
+- Never import from `@/components/ui/` — primitives live in `packages/ui`
+- App-specific blocks go in `apps/web/src/components/`
+- Add shared primitives: `npx shadcn@latest add <name> -c packages/ui`
+
+## Code Style (Biome)
+
+- Indent: tabs, quotes: double, `verbatimModuleSyntax: true`
+- `useSortedClasses` enforced for Tailwind class names
+- `useExhaustiveDependencies` set to `info` (not error)
+- `noUnusedLocals` / `noUnusedParameters` enabled in base tsconfig
+- Never use `any` — prefer `unknown`
+
+---
+
 # Ultracite Code Standards
 
 This project uses **Ultracite**, a zero-config preset that enforces strict code quality standards through automated formatting and linting.

@@ -31,11 +31,12 @@
     "dev": "turbo dev",
     "build": "turbo build",
     "check-types": "turbo check-types",
-    "dev:web": "turbo -F web dev",
+    "dev:web": "turbo -F @contentforge/web dev",
     "db:push": "turbo -F @contentforge/db db:push",
     "db:studio": "turbo -F @contentforge/db db:studio",
     "db:generate": "turbo -F @contentforge/db db:generate",
     "db:migrate": "turbo -F @contentforge/db db:migrate",
+    "test": "turbo test",
     "check": "ultracite check",
     "fix": "ultracite fix",
     "prepare": "husky"

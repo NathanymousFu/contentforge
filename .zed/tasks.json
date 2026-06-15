@@ -1,0 +1,14 @@
+[
+  {
+    "label": "db:migrate",
+    "command": "bun run db:migrate"
+  },
+  {
+    "label": "db:generate",
+    "command": "bun run db:generate"
+  },
+  {
+    "label": "db:studio",
+    "command": "bun run db:studio"
+  },
+]

@@ -1,0 +1,19 @@
+[
+  {
+    "adapter": "JavaScript",
+    "label": "package.json > dev",
+    "request": "launch",
+    "type": "pwa-node",
+    "args": [
+      "run",
+      "dev"
+    ],
+    "cwd": "/Users/nathanymous/Domain/Career/contentforge",
+    "runtimeExecutable": "$ZED_CUSTOM_TYPESCRIPT_RUNNER",
+    "env": {},
+    "runtimeArgs": [
+      "--inspect-brk"
+    ],
+    "console": "integratedTerminal"
+  }
+]
